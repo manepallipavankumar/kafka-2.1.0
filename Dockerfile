@@ -36,7 +36,8 @@ CMD echo "*************** kubectl Installation Completed ******************"
 
 # install GO and Dep and Git
 RUN echo '*************** Creating directory for GO ******************' \
-    && mkdir -p /opt/go/bin \
+    && mkdir  /opt/go/ \
+    && mkdir /opt/go/bin \
     && echo '*************** Installing Go ******************' \
     && curl https://storage.googleapis.com/golang/go1.11.5.linux-amd64.tar.gz | tar xvzf - -C /usr/local \
     && echo '**Installing Git **' \
