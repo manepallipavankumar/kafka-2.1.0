@@ -56,8 +56,8 @@ RUN mkdir -p $GOPATH/src/github.com/operator-framework \
     && make dep \
     && make install
     
-RUN mkdir /usr/local/pavan/operatorbuild \
-    && chmod 777 -R /usr/local/pavan/operatorbuild
+RUN mkdir /usr/local/pavan/src/github.com/k8soperator \
+    && chmod 777 -R /usr/local/pavan/src/github.com/k8soperator
 
 # Define default command.
 CMD trap : TERM INT; sleep infinity & wait
