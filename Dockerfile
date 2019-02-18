@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends apt-utils \
     && echo '*************** Creating directory for GO ******************' \
     && mkdir -p /opt/go/bin \
     && echo '*************** Installing Go ******************' \
-    && curl https://storage.googleapis.com/golang/go1.11.5.linux-amd64.tar.gz | tar -xvzf \
+    && curl https://storage.googleapis.com/golang/go1.11.5.linux-amd64.tar.gz | tar xvzf - -C /usr/local \
     && echo '**Installing Git **' \
     && apt-get install -y git \
     && cd $GOBIN \
@@ -42,6 +42,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends apt-utils \
     && chmod +x /opt/go/bin/operator-sdk \
     && echo '*************** Installing Dep ******************' \
     && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+    && make dep \
+    && make install
 
 # Define default command.
 CMD trap : TERM INT; sleep infinity & wait
