@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends apt-utils \
     && echo '*************** Creating directory for GO ******************' \
     && mkdir -p /opt/go/bin \
     && echo '*************** Installing Go ******************' \
-    && curl https://storage.googleapis.com/golang/go1.11.5.linux-amd64.tar.gz | tar xvzf - -C /usr/local --strip-components=1 \
+    && curl https://storage.googleapis.com/golang/go1.11.5.linux-amd64.tar.gz | tar -xvzf \
     && echo '**Installing Git **' \
     && apt-get install -y git \
     && cd $GOBIN \
