@@ -9,8 +9,6 @@ ENV GOROOT=/usr/local/go \
     CONFLUENT_VERSION=5.0 \
     JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
-RUN source $HOME/.profile
-
 # install pre-requisites and Confluent
 RUN set -x \
     && apt-get update \
