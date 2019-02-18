@@ -6,11 +6,29 @@ ENV GOROOT=/usr/local/go \
     GOBIN=/opt/go/bin \
     KUBECTL_VERSION=v1.11.7 \
     CONFLUENT_VERSION=5.0 \
-    JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+    JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
+    KAFKA_BIN_DIR=/opt/kafka/bin \
+    KAFKA_CONFIG_DIR=/etc/bmw/kafka \
+    KAFKA_DATA_DIR=/var/lib/kafka \
+    KAFKA_LOG_DIR=/var/log/kafka \
+    ZK_BIN_DIR=/opt/zookeeper/bin \
+    ZK_CONFIG_DIR=/etc/zookeeper \
+    ZK_DATA_DIR=/var/lib/zookeeper/data \
+    ZK_DATA_LOG_DIR=/var/lib/zookeeper/log \
+    ZK_LOG_DIR=/var/log/zookeeper
 
 #To Export the PATH Variable
 ENV PATH "${GOROOT}:${GOPATH}:${GOBIN}:${PATH}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/usr/local/go/bin"
 
+COPY scripts/* ${ZK_BIN_DIR}/
+COPY bin/* ${KAFKA_BIN_DIR}/
+COPY config/* ${KAFKA_CONFIG_DIR}/
+RUN set -x \
+    && mkdir -p ${KAFKA_DATA_DIR} \
+    && chown -R :root ${KAFKA_CONFIG_DIR} ${KAFKA_DATA_DIR} \
+    && chmod -R g+rwx ${KAFKA_CONFIG_DIR} ${KAFKA_DATA_DIR} \
+    && chmod +x ${KAFKA_BIN_DIR}/*.sh
+    
 #installing zip,unzip,curl
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils \
     && echo '**Installing zip,unzip,curl **' \
