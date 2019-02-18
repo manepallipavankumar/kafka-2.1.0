@@ -4,10 +4,20 @@ FROM ubuntu:18.04
 ENV GOROOT=/usr/local/go \
     GOPATH=/opt/go \
     GOBIN=/opt/go/bin \
-    PATH="${GOROOT}:${GOPATH}::${GOBIN}:${PATH}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin" \
     KUBECTL_VERSION=v1.11.7 \
     CONFLUENT_VERSION=5.0 \
     JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+
+#To Export the PATH Variable
+ENV PATH "${GOROOT}:${GOPATH}:${GOBIN}:${PATH}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/usr/local/go/bin"
+
+#installing zip,unzip,curl
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils \
+    && echo '**Installing zip,unzip,curl **' \
+    && apt-get install -y zip \
+    && apt-get install -y unzip \
+    && apt-get install -y curl \
+    && apt-get install -y wget
 
 # install pre-requisites and Confluent
 RUN set -x \
@@ -18,30 +28,30 @@ RUN set -x \
     && apt-get update \
     && apt-get install -y confluent-platform-oss-2.11
 
-# install pre-requisites and SDK
+# install kubectl
 CMD echo "*************** Installing kubectl ******************"
 ADD https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl /usr/local/bin/kubectl
 RUN chmod +x /usr/local/bin/kubectl
 CMD echo "*************** kubectl Installation Completed ******************"
 
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils \
-    && echo '**Installing zip,unzip,curl **' \
-    && apt-get install -y zip \
-    && apt-get install -y unzip \
-    && apt-get install -y curl \
-    && apt-get install -y wget \
-    && echo '*************** Creating directory for GO ******************' \
+# install GO and Dep and Git
+RUN echo '*************** Creating directory for GO ******************' \
     && mkdir -p /opt/go/bin \
     && echo '*************** Installing Go ******************' \
     && curl https://storage.googleapis.com/golang/go1.11.5.linux-amd64.tar.gz | tar xvzf - -C /usr/local \
     && echo '**Installing Git **' \
     && apt-get install -y git \
-    && cd $GOBIN \
-    && echo '*************** Fetching framework ******************' \
-    && wget https://github.com/operator-framework/operator-sdk/releases/download/v0.2.1/operator-sdk-v0.2.1-x86_64-linux-gnu -O /opt/go/bin/operator-sdk \
-    && chmod +x /opt/go/bin/operator-sdk \
     && echo '*************** Installing Dep ******************' \
-    && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+    && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh 
+
+# install Operator Framework
+RUN mkdir -p $GOPATH/src/github.com/operator-framework \
+    && cd $GOPATH/src/github.com/operator-framework \
+    && echo '*************** Fetching framework ******************' \
+    && git clone https://github.com/operator-framework/operator-sdk \
+    && cd operator-sdk \
+    && git checkout master \
+    && apt-get install -y make \
     && make dep \
     && make install
 
