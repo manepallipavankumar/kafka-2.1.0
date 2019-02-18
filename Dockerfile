@@ -2,8 +2,8 @@ FROM ubuntu:18.04
 
 # Set environment variables.
 ENV GOROOT=/usr/local/go \
-    GOPATH=/opt/go \
-    GOBIN=/opt/go/bin \
+    GOPATH=/usr/local/pavan/ \
+    GOBIN=/opt/local/pavan/bin \
     KUBECTL_VERSION=v1.11.7 \
     CONFLUENT_VERSION=5.0 \
     JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
