@@ -3,7 +3,7 @@ FROM ubuntu:18.04
 # Set environment variables.
 ENV GOROOT=/usr/local/go \
     GOPATH=/usr/local/pavan/ \
-    GOBIN=/opt/local/pavan/bin \
+    GOBIN=/usr/local/pavan/bin \
     KUBECTL_VERSION=v1.11.7 \
     CONFLUENT_VERSION=5.0 \
     JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
@@ -36,8 +36,8 @@ CMD echo "*************** kubectl Installation Completed ******************"
 
 # install GO and Dep and Git
 RUN echo '*************** Creating directory for GO ******************' \
-    && mkdir  /opt/go/ \
-    && mkdir /opt/go/bin \
+    && mkdir  /usr/local/pavan/ \
+    && mkdir /usr/local/pavan/bin \
     && echo '*************** Installing Go ******************' \
     && curl https://storage.googleapis.com/golang/go1.11.5.linux-amd64.tar.gz | tar xvzf - -C /usr/local \
     && echo '**Installing Git **' \
