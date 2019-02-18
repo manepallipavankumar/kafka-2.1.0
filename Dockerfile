@@ -1,8 +1,15 @@
-RUN source $HOME/.profile
+FROM ubuntu:18.04
 
-ENV CONFLUENT_VERSION=5.0 \
+# Set environment variables.
+ENV GOROOT=/usr/local/go \
+    GOPATH=/opt/go \
+    GOBIN=/opt/go/bin \
+    PATH="${GOROOT}:${GOPATH}::${GOBIN}:${PATH}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin" \
+    KUBECTL_VERSION=v1.11.7 \
+    CONFLUENT_VERSION=5.0 \
     JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
+RUN source $HOME/.profile
 
 # install pre-requisites and Confluent
 RUN set -x \
