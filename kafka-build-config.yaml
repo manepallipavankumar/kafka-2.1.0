@@ -1,0 +1,111 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: kafka-builder
+  annotations:
+    description: Confluent Kafka image build template
+    openshift.io/display-name: Kafka Image Builder
+    tags: bmw,confluent,kafka
+labels:
+  template: kafka-builder
+  component: confluent-kafka
+
+parameters:
+- name: GIT_REPOSITORY
+  displayName: Git repository
+  value: "https://github.com/manepallipavankumar/kafka-2.1.0.git"
+  description: The Git source code repository.
+  required: true
+- name: GIT_REF
+  displayName: Git branch
+  description: The Git source reference.
+  value: "master"
+  required: true
+- name: GIT_SECRET
+  displayName: Git Secret
+  description: The secret to access the Git repository.
+  value: "git-secret"
+  required: true
+- name: GIT_JENKINSFILE
+  displayName: Jenkinsfile
+  description: The location of the Jenkinsfile withing the repository.
+  value: "Jenkinsfile"
+  required: true
+- name: SOURCE_IMAGE_STREAM_VERSION
+  displayName: Source Image Stream Version
+  description: The version of the source image stream used in the Docker strategy.
+  value: "latest"
+  required: true
+- name: IMAGE_STREAM_NAME
+  displayName: Image Stream Name
+  description: The name of the output image stream.
+  value: "kafka"
+  required: true
+- name: IMAGE_STREAM_VERSION
+  displayName: Image Strean Version
+  description: The version of the output image stream.
+  value: "latest"
+  required: true
+
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${IMAGE_STREAM_NAME}
+  spec:
+    tags:
+    - name: latest
+      from:
+        kind: ImageStreamTag
+        name: ${IMAGE_STREAM_VERSION}
+# this build is triggered by the pipeline-config, see below
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: kafka-builder
+  spec:
+    runPolicy: Serial
+    source:
+      git:
+        uri: ${GIT_REPOSITORY}
+        ref: ${GIT_REF}
+      sourceSecret:
+        name: ${GIT_SECRET}
+      secrets:
+      - secret:
+          name: ${PROXY_SECRET}
+        destinationDir: secrets/proxy
+    strategy:
+      type: Docker
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: "${SOURCE_IMAGE_STREAM_NAME}:${SOURCE_IMAGE_STREAM_VERSION}"
+    output:
+      to:
+        kind: ImageStreamTag
+        name: "${IMAGE_STREAM_NAME}:${IMAGE_STREAM_VERSION}"
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: kafka-pipeline
+  spec:
+    runPolicy: Serial
+    triggers:
+      - type: ConfigChange
+      # trigger the pipeline on base image change
+      - type: ImageChange
+        imageChange:
+          from:
+            kind: ImageStreamTag
+            name: "${SOURCE_IMAGE_STREAM_NAME}:${SOURCE_IMAGE_STREAM_VERSION}"
+    source:
+      git:
+        uri: ${GIT_REPOSITORY}
+        ref: ${GIT_REF}
+      sourceSecret:
+        name: ${GIT_SECRET}
+    strategy:
+      jenkinsPipelineStrategy:
+        jenkinsfilePath: ${GIT_JENKINSFILE}
+      type: JenkinsPipeline
