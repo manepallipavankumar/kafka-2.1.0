@@ -64,7 +64,7 @@ RUN mkdir /usr/local/pavan/src/github.com/k8soperator \
 
 RUN chmod 777  -R /usr/local/pavan/ \
     && apt-get install -y vim \
-    && apt-get install docker
+    && apt-get install -y docker
 
 RUN cd /usr/local/pavan/src/github.com/k8soperator/app-operator \
     && operator-sdk add api --api-version=app.example.com/v1alpha1 --kind=PodSet \
