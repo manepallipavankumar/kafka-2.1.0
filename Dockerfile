@@ -62,5 +62,7 @@ RUN mkdir /usr/local/pavan/src/github.com/k8soperator \
     && cd /usr/local/pavan/src/github.com/k8soperator \
     && operator-sdk new app-operator --skip-git-init
 
+RUN chmod 777  -R /usr/local/pavan/
+
 # Define default command.
 CMD trap : TERM INT; sleep infinity & wait
