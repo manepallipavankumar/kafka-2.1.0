@@ -60,7 +60,7 @@ RUN mkdir /usr/local/pavan/src/github.com/k8soperator \
     && chmod 777 -R /usr/local/pavan/src/github.com/k8soperator \
     && chmod 777  -R /usr/local/pavan/pkg/dep \
     && cd /usr/local/pavan/src/github.com/k8soperator \
-    && operator-sdk new app-operator --skip-git-init --api-version=k8s.pavan.com/v1 --kind=WeatherReport
+    && operator-sdk new app-operator --api-version=k8s.pavan.com/v1 --kind=WeatherReport --skip-git-init
 
 # Define default command.
 CMD trap : TERM INT; sleep infinity & wait
