@@ -69,8 +69,12 @@ RUN chmod 777  -R /usr/local/pavan/ \
 RUN cd /usr/local/pavan/src/github.com/k8soperator/app-operator \
     && operator-sdk add api --api-version=app.example.com/v1alpha1 --kind=PodSet \
     && operator-sdk add controller --api-version=app.example.com/v1alpha1 --kind=PodSet \
-    && cd /usr/local/pavan/src/github.com/k8soperator/app-operator/pkg/controller/podset \
-    && 
+    && cd /usr/local/pavan/src/github.com/k8soperator/app-operator/pkg/controller/podset
+    
+COPY podset_controller.go /usr/local/pavan/src/github.com/k8soperator/app-operator/pkg/controller/podset
+
+RUN cd /usr/local/pavan/src/github.com/k8soperator/app-operator \
+    &&operator-sdk generate k8s
 
 # Define default command.
 CMD trap : TERM INT; sleep infinity & wait
